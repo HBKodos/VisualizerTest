@@ -12,6 +12,7 @@ struct Segment: Identifiable {
     var frequency: Double = 0.0
     var hue: Double
 }
+// Test c/pu
 
 @Observable
 final class VisualizerManager {
