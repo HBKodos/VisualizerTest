@@ -10,23 +10,22 @@ struct Segment: Identifiable {
     var id = UUID()
     var amplitude: Double = 0.0
     var frequency: Double = 0.0
-    var hue: Double
+    var color: Color = Color.red
 }
-// Test c/pu
 
 @Observable
 final class VisualizerManager {
     var noOfSegments: Int = 10
     var segments: [Segment] = []
     var currentHue: Double = 0.0
-    let frequencyRange: [Int] = [Int](20..<20000)
+    let frequencyRangeArray: [Int] = [Int](20..<20000)
+    let frequencyRange: Range = 20..<20000
+    let colors: [Color] = [.purple, .red, .black]
     
     init() {
-//        self.noOfSegments   = noOfSegments
-//        self.segments       = segments
-//        self.currentHue     = currentHue
         generateSegments(noOfSegmnents: noOfSegments, hue: &self.currentHue)
     }
+    
     func changeHue(currentHue: Double, noOfSegments: Int) {
         let hueDelta: Double = 1000.0 / Double(noOfSegments)
         self.currentHue = currentHue + hueDelta
@@ -34,18 +33,26 @@ final class VisualizerManager {
             self.currentHue -= 100
         }
     }
+    
     func generateSegments(noOfSegmnents: Int, hue: inout Double) {
         for _ in 0..<noOfSegmnents {
-            segments.append(Segment(hue: hue))
+            segments.append(Segment())
             changeHue(currentHue: hue, noOfSegments: noOfSegmnents)
         }
     }
+    
     func randomizeAmps() {
         for segment in self.segments.indices {
-            self.segments[segment].amplitude = Double.random(in: 20..<20000)
+            self.segments[segment].amplitude = Double(frequencyRange.randomElement()!)
         }
     }
+//    func randomizeColors() {
+//        segments.forEach { segment in
+//            ch
+//        }
+//    }
 }
+
 struct ContentView: View {
     @State private var visualizer = VisualizerManager()
     
@@ -68,16 +75,28 @@ struct ContentView: View {
                 Text("Tunesplash")
                 Button("Brrt", systemImage: "dice", action: visualizer.randomizeAmps)
                     .buttonStyle(.bordered)
-                
+//                Button("Oooh", systemImage: "paintpalette", action: )
+//                    .buttonStyle(.bordered)
+                Picker("#", selection: $visualizer.noOfSegments) {
+                    ForEach(0..<10, id: \.self) {
+                        Text("\($0)")
+                    }
+                }
+
+            }
+            .onChange(of: visualizer.noOfSegments) {
+//                gener
             }
         }
         .onAppear(perform: visualizer.randomizeAmps)
+        .background(.black)
     }
     var segmentView: some View {
         Rectangle()
-            .fill(.purple.gradient)
-            .brightness(-0.1)
-            .cornerRadius(10)
+            .fill(.red.gradient)
+//            .fill(Color(hue: visualizer.currentHue)
+            .brightness(-0.4)
+            .cornerRadius(16)
 //            .padding(.top)
     }
 }
