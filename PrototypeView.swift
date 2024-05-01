@@ -9,7 +9,7 @@ import SwiftUI
 
 enum SegmentShape: View {
     case rectangle, circle
-//    case roundedRectangle(cornerRadius: CGFloat)
+    //    case roundedRectangle(cornerRadius: CGFloat)
     //    var cornerRadius: CGFloat
     
     var body: some View {
@@ -18,8 +18,8 @@ enum SegmentShape: View {
             Rectangle()
         case .circle:
             Circle()
-//        case .roundedRectangle:
-//            RoundedRectangle(cornerRadius: 10)
+            //        case .roundedRectangle:
+            //            RoundedRectangle(cornerRadius: 10)
         }
     }
     
@@ -39,7 +39,8 @@ struct PrototypeSegment: Identifiable, View {
     var body: some View {
         shape
             .foregroundColor(color)
-            .frame(height: .infinity)
+            .cornerRadius(10)
+        //            .frame(height: .infinity)
     }
     
 }
@@ -50,21 +51,31 @@ struct PrototypeView: View {
     var body: some View {
         VStack {
             GeometryReader { geo in
-                HStack(spacing: 2) {
+                HStack(alignment: .bottom ,spacing: 2) {
                     ForEach(segments) { segment in
                         PrototypeSegment()
-                            .frame(height: geo.size.height / (segment.amp / 1.0))
+                            .frame(height: geo.size.height * segment.amp)
+                            .animation(.default, value: segment.amp)
                             .onTapGesture {
+//                                print("butt")
                                 print("Hue: \(segment.hue)\nAmp: \(segment.amp)\nFreq: \(segment.freq)")
+//                                print(geo.frame(in: <#T##CoordinateSpaceProtocol#>))
                             }
                     }
                 }
+                .frame(height: .infinity)
                 .padding()
                 .onAppear {
                     generatePTSegments()
-            }
+                }
             }
             Button("Wawiwawa", action: randomizePTAmps)
+        }
+        .background(.yellow)
+        .onTapGesture {
+            segments.enumerated().forEach { index, segment in
+                print("Segment#\(index) Amp: \(segment.amp)")
+            }
         }
     }
     func generatePTSegments() {
