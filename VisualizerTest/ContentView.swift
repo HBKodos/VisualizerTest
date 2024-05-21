@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-enum SegmentShape: {
+enum SegmentShape {
     case rectangle(cornerRadius: CGFloat?)
     case circle
     //    case roundedRectangle(cornerRadius: CGFloat)
@@ -25,7 +25,7 @@ enum SegmentShape: {
     
 }
 
-struct Segment: Identifiable {
+struct Segment: Identifiable, View {
     let id = UUID()
     var amp: Double = { Double.random(in: 0.0..<1.0) }()
     var freq: Double = { Double.random(in: 0.0..<20000.0) }()
@@ -35,17 +35,17 @@ struct Segment: Identifiable {
                              brightness: 1.0,
                              opacity: 1.0)
     }
-    var shape: SegmentShape
+    var shape: SegmentShape = .rectangle(cornerRadius: 20)
+    var cornerRadius: CGFloat?
     
-//    var body: some View {
-//        switch shape {
-//        case let .rectangle(cornerRadius):
-//            shape
-//                .cornerRadius(cornerRadius ?? 69)
-//        case .circle:
-//            shape
-//        }
-//    }
+    var body: some View {
+        switch shape {
+        case let .rectangle(cornerRadius):
+            RoundedRectangle(cornerRadius: cornerRadius ?? 0.0)
+        case .circle:
+            Circle()
+        }
+    }
     
 }
 
@@ -56,6 +56,7 @@ final class VisualizerManager {
     let frequencyRangeArray: [Int] = [Int](20..<20000)
     let frequencyRange: Range = 20..<20000
     let colors: [Color] = [.purple, .red, .black]
+    var cornerRadius: CGFloat = 0
     var shape: SegmentShape = .rectangle(cornerRadius: 0)
     
     init() {
@@ -83,7 +84,7 @@ struct ContentView: View {
             GeometryReader { geo in
                 HStack(alignment: .bottom ,spacing: 2) {
                     ForEach(visualizer.segments) { segment in
-                        Segment()
+                        Segment(shape: visualizer.shape)
                             .frame(height: geo.size.height * segment.amp)
                             .animation(.default, value: segment.amp)
                             .onTapGesture {
@@ -95,11 +96,12 @@ struct ContentView: View {
                 }
                 .frame(height: .infinity)
                 .padding()
+                
+                Button("Wawiwawa", action: visualizer.randomizeAmps)
             }
-            Button("Wawiwawa", action: visualizer.randomizeAmps)
+            //        .onAppear(perform: visualizer.randomizeAmps)
+            .background(.black)
         }
-//        .onAppear(perform: visualizer.randomizeAmps)
-        .background(.black)
     }
 }
 
