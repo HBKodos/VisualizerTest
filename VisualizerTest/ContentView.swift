@@ -6,40 +6,46 @@
 //
 import SwiftUI
 
-enum SegmentShape: View {
-    case rectangle, circle
+enum SegmentShape: {
+    case rectangle(cornerRadius: CGFloat?)
+    case circle
     //    case roundedRectangle(cornerRadius: CGFloat)
     //    var cornerRadius: CGFloat
     
-    var body: some View {
-        switch self {
-        case .rectangle:
-            Rectangle()
-        case .circle:
-            Circle()
-            //        case .roundedRectangle:
-            //            RoundedRectangle(cornerRadius: 10)
-        }
-    }
+//    var body: some View {
+//        switch self {
+//        case let .rectangle(cornerRadius):
+//            RoundedRectangle(cornerRadius: cornerRadius ?? 69)
+//        case .circle:
+//            Circle()
+//            //        case .roundedRectangle:
+//            //            RoundedRectangle(cornerRadius: 10)
+//        }
+//    }
     
 }
 
-struct Segment: Identifiable, View {
+struct Segment: Identifiable {
     let id = UUID()
     var amp: Double = { Double.random(in: 0.0..<1.0) }()
     var freq: Double = { Double.random(in: 0.0..<20000.0) }()
-    var hue: Double = 0.98
+    var hue: Double = 0.68
     var color: Color { Color(hue: self.hue,
                              saturation: 1.0,
                              brightness: 1.0,
                              opacity: 1.0)
     }
-    var shape: SegmentShape = .rectangle
-    var body: some View {
-        shape
-            .foregroundColor(color)
-            .cornerRadius(10)
-    }
+    var shape: SegmentShape
+    
+//    var body: some View {
+//        switch shape {
+//        case let .rectangle(cornerRadius):
+//            shape
+//                .cornerRadius(cornerRadius ?? 69)
+//        case .circle:
+//            shape
+//        }
+//    }
     
 }
 
@@ -50,6 +56,7 @@ final class VisualizerManager {
     let frequencyRangeArray: [Int] = [Int](20..<20000)
     let frequencyRange: Range = 20..<20000
     let colors: [Color] = [.purple, .red, .black]
+    var shape: SegmentShape = .rectangle(cornerRadius: 0)
     
     init() {
         generateSegments(noOfSegmnents: noOfSegments, color: colors.randomElement()!)
@@ -57,7 +64,7 @@ final class VisualizerManager {
     
     func generateSegments(noOfSegmnents: Int, color: Color) {
         for _ in 0..<10 {
-            segments.append(Segment())
+            segments.append(Segment(shape: shape))
         }
     }
     
