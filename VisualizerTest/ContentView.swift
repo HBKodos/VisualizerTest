@@ -9,20 +9,6 @@ import SwiftUI
 enum SegmentShape {
     case rectangle(cornerRadius: CGFloat?)
     case circle
-    //    case roundedRectangle(cornerRadius: CGFloat)
-    //    var cornerRadius: CGFloat
-    
-//    var body: some View {
-//        switch self {
-//        case let .rectangle(cornerRadius):
-//            RoundedRectangle(cornerRadius: cornerRadius ?? 69)
-//        case .circle:
-//            Circle()
-//            //        case .roundedRectangle:
-//            //            RoundedRectangle(cornerRadius: 10)
-//        }
-//    }
-    
 }
 
 struct Segment: Identifiable, View {
@@ -33,8 +19,8 @@ struct Segment: Identifiable, View {
     var color: Color { Color(hue: self.hue,
                              saturation: 1.0,
                              brightness: 1.0,
-                             opacity: 1.0)
-    }
+                             opacity: 1.0)}
+    
     var shape: SegmentShape = .rectangle(cornerRadius: 20)
     var cornerRadius: CGFloat?
     
@@ -55,18 +41,23 @@ final class VisualizerManager {
     var segments: [Segment] = []
     let frequencyRangeArray: [Int] = [Int](20..<20000)
     let frequencyRange: Range = 20..<20000
-    let colors: [Color] = [.purple, .red, .black]
+    let colors: [Color] = [.purple, .red, .mint]
     var cornerRadius: CGFloat = 0
     var shape: SegmentShape = .rectangle(cornerRadius: 0)
+    var globalColor: Color = .black
     
     init() {
-        generateSegments(noOfSegmnents: noOfSegments, color: colors.randomElement()!)
+        generateSegments(noOfSegmnents: noOfSegments, color: globalColor)
     }
     
     func generateSegments(noOfSegmnents: Int, color: Color) {
         for _ in 0..<10 {
             segments.append(Segment(shape: shape))
         }
+    }
+    
+    func randomizeColor() {
+        globalColor = colors.randomElement()!
     }
     
     func randomizeAmps() {
@@ -84,9 +75,10 @@ struct ContentView: View {
             GeometryReader { geo in
                 HStack(alignment: .bottom ,spacing: 2) {
                     ForEach(visualizer.segments) { segment in
-                        Segment(shape: visualizer.shape)
+                        Segment()
                             .frame(height: geo.size.height * segment.amp)
                             .animation(.default, value: segment.amp)
+                            .foregroundColor(segment.color)
                             .onTapGesture {
                                 print("butt")
                                 print("Hue: \(segment.hue)\nAmp: \(segment.amp)\nFreq: \(segment.freq)")
@@ -97,10 +89,14 @@ struct ContentView: View {
                 .frame(height: .infinity)
                 .padding()
                 
-                Button("Wawiwawa", action: visualizer.randomizeAmps)
             }
             //        .onAppear(perform: visualizer.randomizeAmps)
-            .background(.black)
+            HStack {
+                Button("Wawiwawa", action: visualizer.randomizeAmps)
+                Button("Chroma") {
+                    //                    visualizer.c
+                }
+            }
         }
     }
 }
